@@ -41,3 +41,22 @@ def search(request):
             results.append(entry)
 
     return render(request, "encyclopedia/search.html", {'results': results, 'number': len(results), 'q': request.GET['q']})
+
+
+def new_page(request):
+    if request.method == 'POST':
+        # print(request.POST)
+        title = request.POST['title']
+        content = request.POST['content']
+
+        if util.get_entry(title):
+            error = "Error. This entry already exists."
+            return render(request, "encyclopedia/new_page.html", {'error': error, 'title': title, 'content': content})
+
+        util.save_entry(title, content)
+        entry = util.get_entry(title)
+        html = markdown2.markdown(entry)
+
+        return render(request, 'encyclopedia/entry.html', {"html": html})
+
+    return render(request, "encyclopedia/new_page.html")
