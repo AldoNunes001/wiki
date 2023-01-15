@@ -3,6 +3,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 
 import markdown2
+import random
 
 from . import util
 
@@ -84,3 +85,10 @@ def edit_page(request, entry):
     content = util.get_entry(title)
 
     return render(request, "encyclopedia/edit_page.html", {'title': title, 'content': content})
+
+
+def random_page(request):
+    entries = util.list_entries()
+    random_choice = random.choice(entries)
+
+    return HttpResponseRedirect(reverse('encyclopedia:entry_page', args=[random_choice]))
