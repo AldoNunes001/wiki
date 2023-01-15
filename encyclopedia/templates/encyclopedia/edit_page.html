@@ -1,0 +1,38 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+
+    <h1>Edit page</h1>
+
+    {% if error %}
+        {{ error }}
+    {% endif %}
+
+    <form action="{% url 'encyclopedia:edit_page' title %}" method="post">
+        {% csrf_token %}
+        <div>
+            <h4>
+                <label for="title">Title</label>
+            </h4>
+                <input id="title" name="title" type="text" value="{{ title }}" required readonly>
+        </div>
+        <br>    
+        <div>
+            <h4>
+                <label for="content">Content</label>
+            </h4>
+            <textarea id="content" name="content" required>{{ content }}</textarea>
+        </div>
+
+        <input type="submit" value="Save">
+    </form>
+
+    <!-- <script>
+        document.getElementById("content").defaultValue = "{{ content }}";
+    </script> -->
+
+{% endblock %}

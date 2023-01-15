@@ -46,17 +46,21 @@ def search(request):
 def new_page(request):
     if request.method == 'POST':
         # print(request.POST)
-        title = request.POST['title']
-        content = request.POST['content']
+        title = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '').strip()
+
+        if not title or not content:
+            error = "Error. Title and content are required fields."
+            return render(request, "encyclopedia/new_page.html", {'error': error, 'title': title, 'content': content})
 
         if util.get_entry(title):
             error = "Error. This entry already exists."
             return render(request, "encyclopedia/new_page.html", {'error': error, 'title': title, 'content': content})
 
         util.save_entry(title, content)
-        entry = util.get_entry(title)
-        html = markdown2.markdown(entry)
+        # entry = util.get_entry(title)
+        # html = markdown2.markdown(entry)
 
-        return render(request, 'encyclopedia/entry.html', {"html": html})
+        return HttpResponseRedirect(reverse('encyclopedia:entry_page', args=[title]))
 
     return render(request, "encyclopedia/new_page.html")
