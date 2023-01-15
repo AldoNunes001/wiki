@@ -22,7 +22,7 @@ def entry_page(request, name):
     html = markdown2.markdown(mkdown)
 
     # return render(request, f'encyclopedia/{name}.html', {"name": name})
-    return render(request, 'encyclopedia/entry.html', {"html": html})
+    return render(request, 'encyclopedia/entry.html', {"html": html, 'entry': name})
 
 
 def search(request):
@@ -64,3 +64,23 @@ def new_page(request):
         return HttpResponseRedirect(reverse('encyclopedia:entry_page', args=[title]))
 
     return render(request, "encyclopedia/new_page.html")
+
+
+def edit_page(request, entry):
+    if request.method == 'POST':
+        # print(request.POST)
+        title = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '').strip()
+
+        if not title or not content:
+            error = "Error. Title and content are required fields."
+            return render(request, "encyclopedia/edit_page.html", {'error': error, 'title': title, 'content': content})
+
+        util.save_entry(title, content)
+
+        return HttpResponseRedirect(reverse('encyclopedia:entry_page', args=[title]))
+
+    title = entry
+    content = util.get_entry(title)
+
+    return render(request, "encyclopedia/edit_page.html", {'title': title, 'content': content})
